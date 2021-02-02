@@ -1,0 +1,23 @@
+{
+    "wifi": {
+        "ssid": "example",
+        "pass": "3x4m913"
+    },
+    "mqtt": {
+        "user": "example",
+        "pass": "3x4m913",
+        "host": "[home assistant server ip]",
+        "port": 1883,
+        "clientId": "example_switch_1",
+        "topic": "example/switch_1",
+        "subtopic_state": "/state",
+        "subtopic_avail": "/available",
+        "subtopic_set": "/set"
+    },
+    "servo": {
+        "pin": 4,
+        "duty_on": 130,
+        "duty_off": 90,
+        "duty_mid": 110
+    }
+}
