@@ -12,7 +12,14 @@ import time
 sta_if = None
 def wifi_connect():
     global sta_if
-    sta_if = network.WLAN(network.STA_IF); sta_if.active(True)
+    global ap_if
+
+    # Disable access point
+    ap_if = network.WLAN(network.AP_IF)
+    ap_if.active(False)
+    
+    sta_if = network.WLAN(network.STA_IF)
+    sta_if.active(True)
     sta_if.connect(settings["wifi"]["ssid"], settings["wifi"]["pass"]) # Connect to an AP
     
     for i in range(20):
@@ -83,9 +90,18 @@ mqtt.connect()
 mqtt.subscribe(settings["mqtt"]["topic"] + settings["mqtt"]["subtopic_set"])
 
 mqtt.publish(settings["mqtt"]["topic"] + settings["mqtt"]["subtopic_state"], "ON")
-mqtt.publish(settings["mqtt"]["topic"] + settings["mqtt"]["subtopic_avail"], "online")
+
+SLEEP_TIME = 0.25 # sec
+AVAIL_INTERVAL = 10 # sec
+
+avail_timer = AVAIL_INTERVAL
 
 while True:
+    time.sleep(SLEEP_TIME)
+    
     wifi_ensure_connected()
     mqtt.check_msg()
-    time.sleep(0.25)
+    avail_timer += SLEEP_TIME
+    if avail_timer >= AVAIL_INTERVAL:
+        avail_timer = 0
+        mqtt.publish(settings["mqtt"]["topic"] + settings["mqtt"]["subtopic_avail"], "online")
